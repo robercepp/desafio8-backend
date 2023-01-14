@@ -1,0 +1,129 @@
+// conectado en "localhost:27017"
+
+// se crea la base de datos "ecommerce"
+use ecommerce
+
+// se crea la colección "mensajes" y "productos" dentro de "ecommerce"
+db.createCollection("mensajes")
+db.createCollection("productos")
+
+//se agregan los siguientes documentos a la colección "productos"
+
+db.productos.insertMany(
+    [{
+    nombre: "Libreta de Chicas Gamer",
+    precio: 120,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fchicasgamer.webp?alt=media&token=cd2afa50-c307-4573-8209-cda00b67814e"
+  },
+  {
+    nombre: "Libreta de Six Fanarts",
+    precio: 580,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fsixfanarts.webp?alt=media&token=695eaf91-f7d0-4b58-9289-141322b92248"
+  },
+  {
+    nombre: "Libreta de Lulu Martins",
+    precio: 900,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Flulumartins.webp?alt=media&token=34b1493c-4428-4576-a999-5c1b4a5e7e6e"
+  },
+  {
+    nombre: "Libreta de Christine Hug",
+    precio: 1280,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fchristinehug.webp?alt=media&token=7cab7c92-2bda-4859-ae78-877b953b4012"
+  },
+  {
+    nombre: "Stickers de Sirenas",
+    precio: 1700,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fsirenas.webp?alt=media&token=44c4b86f-c3a4-4878-a665-c6b81d8234f0"
+  },
+  {
+    nombre: "Stickers de Chicas",
+    precio: 2300,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fchicas.webp?alt=media&token=7504acaf-c61c-4ee5-b235-69ea4ad119e9"
+  },
+  {
+    nombre: "Stickers de Halloween",
+    precio: 2860,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fhalloween.webp?alt=media&token=25deb9c1-3e04-4154-8c83-b879a5c592fc"
+  },
+  {
+    nombre: "Stickers de Animales",
+    precio: 3350,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fanimales.webp?alt=media&token=1bd17888-2932-4d2a-8e0e-e24f87025788"
+  },
+  {
+    nombre: "Poster de Una Noche de Verano",
+    precio: 4320,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fnocheverano.webp?alt=media&token=f58395a8-071e-479f-8e76-c1be23389752"
+  },
+  {
+    nombre: "Poster de Amantes Mariposa",
+    precio: 4990,
+    thumbnail: "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Famantesmariposa.webp?alt=media&token=4b7556ca-eb8b-4cea-ad2a-193b78880729"
+  }]
+)
+
+//se listan los documentos en cada colección:
+db.productos.find()
+db.mensajes.find()
+
+//se enumeran la cantidad de documentos en las colecciones.
+db.productos.countDocuments()
+db.mensajes.countDocuments()
+
+//se inserta un producto mas
+db.productos.insertOne(
+    {
+    "nombre": "Poster de San Valentín espacial",
+    "precio": 5000,
+    "thumbnail": "https://firebasestorage.googleapis.com/v0/b/react-34755-2022-fecd4.appspot.com/o/resources%2Fimagenes%2Fsanvalentin.webp?alt=media&token=d350ebbb-c3d5-4303-bf59-e946171b4a9c"
+  }
+  )
+
+  //se consulta un producto según nombre: 
+  db.productos.find({nombre: "Poster de Una Noche de Verano"})
+
+  //se listan productos con un precio menor a 1000:
+  db.productos.find({precio: {$lte: 1000}})
+
+  //se listan productos con un precio entre 1000 y 3000:
+    db.productos.find({$and: [{precio: {$gte: 1000}}, {precio: {$lte: 3000}}]})
+
+//se listan productos con precio mayores a 3000:
+db.productos.find({precio: {$gte: 3000}})
+
+//se lista el nombre del 3er producto mas barato:
+db.productos.find({}, {nombre: 1, _id: 0}).skip(2).limit(1).sort({precio:1})
+
+//se añade el campo "stock" a todos los productos con un valor de 100:
+db.productos.updateMany({}, {$set:{"stock": 100}})
+
+//se cambia el stock a 0 de todos los productos con precio mayor a 4000:
+db.productos.updateMany({precio: {$gte: 3000}}, {$set:{"stock": 0}})
+
+//se borran los productos con un precio menor a 1000:
+db.productos.deleteMany({precio: {$lte: 1000}})
+
+//se crea el usuario "pepe" con clave "asd456" que solo puede leer datos mas no modificar:
+use admin
+
+db.createUser(
+    {
+        user: "pepe",
+        pwd: "asd456",
+        roles: [
+            {role: "read", db: "ecommerce"}
+        ]
+    }
+)
+
+mongo -u pepe -p asd456
+
+use ecommerce
+
+db.productos.insertOne(
+    {
+    "nombre": "producto de prueba",
+    "precio": 1,
+    "thumbnail": "dummy"
+  }
+  )
